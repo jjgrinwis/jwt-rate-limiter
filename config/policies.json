@@ -1,0 +1,119 @@
+{
+  "policies": [
+    {
+      "handler": {
+        "export": "OpenIdJwtInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "secret": "$env(JWT_SECRET)"
+        }
+      },
+      "name": "open-id-jwt-auth-inbound",
+      "policyType": "open-id-jwt-auth-inbound"
+    },
+    {
+      "handler": {
+        "export": "RateLimitInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "rateLimitBy": "function",
+          "requestsAllowed": 2,
+          "timeWindowMinutes": 1,
+          "identifier": {
+            "module": "$import(./modules/my-custom-rate-limiter)",
+            "export": "rateLimitKey"
+          }
+        }
+      },
+      "name": "rate-limit-inbound",
+      "policyType": "rate-limit-inbound"
+    },
+    {
+      "handler": {
+        "export": "CompositeInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "policies": [
+            "rate-limit-inbound",
+            "quota-inbound",
+            "openmeter-inbound",
+            "custom-code-inbound",
+            "mock-api-inbound"
+          ]
+        }
+      },
+      "name": "composite-inbound",
+      "policyType": "composite-inbound"
+    },
+    {
+      "handler": {
+        "export": "MockApiInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "exampleName": "success"
+        }
+      },
+      "name": "mock-api-inbound",
+      "policyType": "mock-api-inbound"
+    },
+    {
+      "handler": {
+        "export": "QuotaInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "identifier": {
+            "getQuotaDetailExport": "getQuotaDetail",
+            "module": "$import(./modules/my-custom-quota-limiter)"
+          },
+          "quotaAnchorMode": "first-api-call",
+          "period": "hourly",
+          "quotaBy": "function"
+        }
+      },
+      "name": "quota-inbound",
+      "policyType": "quota-inbound"
+    },
+    {
+      "handler": {
+        "export": "default",
+        "module": "$import(./modules/ip-restriction-inbound)",
+        "options": {
+          "allowedIpAddresses": [
+            "list:akamai",
+            "84.27.144.50",
+            "23.50.48.0/20",
+            "23.48.168.0/22",
+            "2600:14a0::/40"
+          ]
+        }
+      },
+      "name": "ip-restriction-inbound",
+      "policyType": "custom-code-inbound"
+    },
+    {
+      "handler": {
+        "export": "OpenMeterInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "apiKey": "$env(OPENMETER_API_KEY)",
+          "meter": {
+            "type": "api-request",
+            "data": {
+              "requests": 1
+            }
+          }
+        }
+      },
+      "name": "openmeter-inbound",
+      "policyType": "openmeter-inbound"
+    },
+    {
+      "handler": {
+        "export": "default",
+        "module": "$import(./modules/show-quota)"
+      },
+      "name": "custom-code-inbound",
+      "policyType": "custom-code-inbound"
+    }
+  ]
+}

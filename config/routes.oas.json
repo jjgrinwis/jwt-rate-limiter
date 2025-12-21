@@ -1,0 +1,242 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "My Zuplo API"
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT authorization token. Format: `Bearer {token}`"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string",
+            "description": "The path of the request that generated this error (e.g., /rate-limiter)"
+          },
+          "trace": {
+            "type": "object",
+            "properties": {
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "requestId": {
+                "type": "string"
+              },
+              "buildId": {
+                "type": "string"
+              },
+              "rayId": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "examples": {
+      "SuccessExample": {
+        "summary": "Successful ping response",
+        "value": {
+          "ping": "ok"
+        }
+      },
+      "RateLimitExample": {
+        "summary": "Rate limit exceeded",
+        "value": {
+          "type": "https://httpproblems.com/http-status/429",
+          "title": "Too Many Requests",
+          "status": 429,
+          "instance": "{request-path}",
+          "trace": {
+            "timestamp": "2025-12-13T17:09:23.076Z",
+            "requestId": "2bacfbe6-ea49-4ac6-bc32-d74f772d5e54",
+            "buildId": "40936391-4df7-4898-be17-47f1a4e1d108",
+            "rayId": "9ad711a2d96d1e57"
+          }
+        }
+      },
+      "QuotaExceededExample": {
+        "summary": "Quota exceeded",
+        "value": {
+          "type": "https://httpproblems.com/http-status/429",
+          "title": "Too Many Requests",
+          "status": 429,
+          "detail": "Quota exceeded for meters 'requests'",
+          "instance": "{request-path}",
+          "trace": {
+            "timestamp": "2025-12-19T15:48:27.116Z",
+            "requestId": "e3675db3-0bb8-4454-9044-056b6946c5b3",
+            "buildId": "72f8356d-5ef8-4512-8175-7f676caa1edb",
+            "rayId": "9b080b5539ab3d4d"
+          }
+        }
+      },
+      "NoAuthHeaderExample": {
+        "summary": "No authorization header",
+        "value": {
+          "type": "https://httpproblems.com/http-status/401",
+          "title": "Unauthorized",
+          "status": 401,
+          "detail": "No authorization header",
+          "instance": "{request-path}",
+          "trace": {
+            "timestamp": "2025-12-14T00:00:27.771Z",
+            "requestId": "3c4d9b03-c1a8-47e8-a75d-cca130cbe6e3",
+            "buildId": "a8cd6f13-db4f-4f30-b9c5-e73e442eb06d",
+            "rayId": "9ad96bccf98896e5"
+          }
+        }
+      },
+      "InvalidBearerFormatExample": {
+        "summary": "Invalid bearer token format",
+        "value": {
+          "type": "https://httpproblems.com/http-status/401",
+          "title": "Unauthorized",
+          "status": 401,
+          "detail": "Invalid bearer token format for authorization header",
+          "instance": "{request-path}",
+          "trace": {
+            "timestamp": "2025-12-14T00:03:31.050Z",
+            "requestId": "bca800d8-afe2-4e38-990b-bfebf3c057ee",
+            "buildId": "a8cd6f13-db4f-4f30-b9c5-e73e442eb06d",
+            "rayId": "9ad970461f6a71b3"
+          }
+        }
+      },
+      "IpRestrictedExample": {
+        "summary": "IP address blocked",
+        "value": {
+          "type": "https://httpproblems.com/http-status/401",
+          "title": "Unauthorized",
+          "status": 401,
+          "instance": "{request-path}",
+          "trace": {
+            "timestamp": "2025-12-19T15:44:55.816Z",
+            "requestId": "efa099f6-f381-4db3-a70b-b1cac1bcb790",
+            "buildId": "043acafb-31a8-4974-b484-060037caec74",
+            "rayId": "9b08062c274cf5bf"
+          }
+        }
+      }
+    },
+    "responses": {
+      "SuccessResponse": {
+        "description": "Successful response",
+        "content": {
+          "application/json": {
+            "examples": {
+              "success": {
+                "$ref": "#/components/examples/SuccessExample"
+              }
+            }
+          }
+        }
+      },
+      "RateLimitResponse": {
+        "description": "Too Many Requests - Rate limit exceeded",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "rate-limit-exceeded": {
+                "$ref": "#/components/examples/RateLimitExample"
+              },
+              "quota-exceeded": {
+                "$ref": "#/components/examples/QuotaExceededExample"
+              }
+            }
+          }
+        }
+      },
+      "UnauthorizedResponse": {
+        "description": "Unauthorized - Missing or invalid JWT token",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "examples": {
+              "no-auth-header": {
+                "$ref": "#/components/examples/NoAuthHeaderExample"
+              },
+              "invalid-bearer-format": {
+                "$ref": "#/components/examples/InvalidBearerFormatExample"
+              },
+              "ip-restricted": {
+                "$ref": "#/components/examples/IpRestrictedExample"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/rate-limiter": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "get": {
+        "summary": "JWT rate-limiter",
+        "description": "An API endpoint that demonstrates rate limiting and quota management based on JWT bearer token claims.\n\nIt will:\n1. Validate the request originates from an Akamai IP address\n2. Validate the JWT using the standard demo secret from [jwt.io](https://jwt.io) (for testing purposes)\n3. Apply rate limiting based on the rate_limit claim in the JWT\n4. Enforce quota limits based on the quota claim in the JWT\n5. Forward usage metrics to OpenMeter for tracking\n6. Return a 200 OK response as defined in the OpenAPI specification\n\nThe sub claim from the JWT is used as the identifier for rate limit and quota tracking. In the example JWT below, the customer is limited to 10 requests per 60-second window and has a quota of 50 requests per hour.\n\n```\n{\n  \"sub\": \"1234567890\",\n  \"name\": \"John Doe\",\n  \"rate_limit\": {\n    \"limit\": 10,\n    \"window\": 60\n  },\n  \"quota\": 50,\n  \"iat\": 1766154143,\n  \"exp\": 1766954143\n}\n```\n\n**Authentication Required:** This endpoint requires a valid JWT Bearer token in the Authorization header.``",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitResponse"
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "https://echo.zuplo.io"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "ip-restriction-inbound",
+              "open-id-jwt-auth-inbound",
+              "composite-inbound"
+            ]
+          }
+        },
+        "operationId": "test"
+      }
+    }
+  }
+}
