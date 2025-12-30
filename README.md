@@ -73,39 +73,6 @@ The JWT token should include the following claims:
 - `rate_limit.window`: Time window in seconds
 - `quota`: Number of requests allowed per hour
 
-## Usage
-
-### Development
-
-Start the local development server:
-
-```bash
-npm run dev
-```
-
-### Testing
-
-Run the test suite:
-
-```bash
-npm test
-```
-
-### Documentation
-
-Start the documentation server:
-
-```bash
-npm run docs
-```
-
-### API Request Example
-
-```bash
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-     https://your-api.zuplo.app/rate-limiter
-```
-
 ## How It Works
 
 ### Request Flow
@@ -187,18 +154,6 @@ Validates source IP addresses:
 - Checks `true-client-ip` header
 - Supports IP ranges and CIDR notation
 - Configured to allow Akamai network IPs
-
-## Deployment
-
-Deploy to Zuplo:
-
-```bash
-# Deploy to production
-zuplo deploy
-
-# Deploy to a specific environment
-zuplo deploy --environment staging
-```
 
 ## License
 
