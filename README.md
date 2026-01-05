@@ -23,21 +23,14 @@ This project implements a sophisticated API gateway that:
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
-- npm or yarn
 - A Zuplo account (for deployment)
 
-## Installation
-
-```bash
-npm install
-```
 
 ## Configuration
 
 ### Environment Variables
 
-Create a `.env` file based on `env.example`:
+Store some secrets in your Zuplo environment
 
 ```bash
 JWT_SECRET=your-jwt-secret-here
