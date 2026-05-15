@@ -36,8 +36,6 @@
           "policies": [
             "rate-limit-inbound",
             "quota-inbound",
-            "openmeter-inbound",
-            "custom-code-inbound",
             "mock-api-inbound"
           ]
         }
@@ -114,6 +112,19 @@
       },
       "name": "custom-code-inbound",
       "policyType": "custom-code-inbound"
+    },
+    {
+      "handler": {
+        "module": "$import(@zuplo/runtime)",
+        "export": "MoesifInboundPolicy",
+        "options": {
+          "applicationId": "eyJhcHAiOiI2NzY6NzQ4IiwidmVyIjoiMi4xIiwib3JnIjoiMTYzOjc3NyIsImlhdCI6MTc3MjMyMzIwMH0.ZvHZqJYg81TXOwdgzgHKSw170a3OoxCmDL61vfSVzjM",
+          "logRequestBody": true,
+          "logResponseBody": true
+        }
+      },
+      "name": "moesif-inbound",
+      "policyType": "moesif-inbound"
     }
   ]
 }

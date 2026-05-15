@@ -10,7 +10,7 @@ export default async (
   // Get usage from a quota policy named 'my-quota-policy'
   const usage = QuotaInboundPolicy.getUsage(context, 'quota-inbound');
   
-  context.log.info("Quota usage:", usage);
+  context.log.info(usage);
   
   return request;
 };

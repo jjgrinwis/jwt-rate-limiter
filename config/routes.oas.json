@@ -201,7 +201,7 @@
       },
       "get": {
         "summary": "JWT rate-limiter",
-        "description": "An API endpoint that demonstrates rate limiting and quota management based on JWT bearer token claims.\n\nIt will:\n1. Validate the request originates from an Akamai IP address\n2. Validate the JWT using the standard demo secret from [jwt.io](https://jwt.io) (for testing purposes)\n3. Apply rate limiting based on the rate_limit claim in the JWT\n4. Enforce quota limits based on the quota claim in the JWT\n5. Forward usage metrics to OpenMeter for tracking\n6. Return a 200 OK response as defined in the OpenAPI specification\n\nThe sub claim from the JWT is used as the identifier for rate limit and quota tracking. In the example JWT below, the customer is limited to 10 requests per 60-second window and has a quota of 50 requests per hour.\n\n```\n{\n  \"sub\": \"1234567890\",\n  \"name\": \"John Doe\",\n  \"rate_limit\": {\n    \"limit\": 10,\n    \"window\": 60\n  },\n  \"quota\": 50,\n  \"iat\": 1766154143,\n  \"exp\": 1766954143\n}\n```\n\n**Authentication Required:** This endpoint requires a valid JWT Bearer token in the Authorization header.``",
+        "description": "An API endpoint that demonstrates rate limiting and quota management based on JWT bearer token sub claim.\n\nIt will:\n1. Validate the request originates from an Akamai IP address\n2. Validate the JWT using the standard demo secret from [jwt.io](https://jwt.io) (for testing purposes)\n3. Apply rate limiting based on the rate_limit claim in the JWT\n4. Enforce quota limits based on the quota claim in the JWT\n5. Forward usage metrics to OpenMeter for tracking\n6. Return a 200 OK response as defined in the OpenAPI specification\n\nThe sub claim from the JWT is used as the identifier for rate limit and quota tracking. In the example JWT below, the customer is limited to 10 requests per 60-second window and has a quota of 50 requests per hour.\n\n```\n{\n  \"sub\": \"1234567890\",\n  \"name\": \"John Doe\",\n  \"rate_limit\": {\n    \"limit\": 10,\n    \"window\": 60\n  },\n  \"quota\": 50,\n  \"iat\": 1766154143,\n  \"exp\": 1766954143\n}\n```\n\n**Authentication Required:** This endpoint requires a valid JWT Bearer token in the Authorization header.``",
         "security": [
           {
             "BearerAuth": []
@@ -231,6 +231,7 @@
             "inbound": [
               "ip-restriction-inbound",
               "open-id-jwt-auth-inbound",
+              "moesif-inbound",
               "composite-inbound"
             ]
           }
