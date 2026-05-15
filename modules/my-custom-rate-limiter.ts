@@ -17,11 +17,11 @@ export const rateLimitKey = (
   const { window, limit } = request.user.data.rate_limit;
 
   // Validate window and limit
-  if (typeof window !== "number" || window <= 0) {
+  if (!Number.isFinite(window) || window <= 0 || window >= 60) {
     context.log.error("Invalid rate_limit window value");
     return undefined;
   }
-  if (typeof limit !== "number" || limit <= 0) {
+  if (!Number.isFinite(limit) || limit <= 0 || limit >= 20) {
     context.log.error("Invalid rate_limit limit value");
     return undefined;
   }
