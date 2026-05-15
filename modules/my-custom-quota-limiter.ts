@@ -20,6 +20,11 @@ export const getQuotaDetail: GetQuotaDetailFunction = async (
     return undefined;
   }
 
+  if (!Number.isFinite(request.user.data.quota) || request.user.data.quota >= 250 ) {
+    context.log.error("Using quota > 250");
+    return undefined;
+  }
+
   return {
     key: request.user.sub,
     allowances: {
